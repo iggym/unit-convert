@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+</head>
+<body>
+    <main class="converter-container">
+        <header>
+            <h1>Unit Converter ✨</h1>
+            <div class="category-selector-wrapper">
+                <label for="category-select" class="sr-only">Conversion Category</label>
+                <select id="category-select">
+                    <option value="length">📏 Length</option>
+                    <option value="weight">⚖️ Weight</option>
+                    <option value="temperature">🌡️ Temperature</option>
+                    <option value="volume">💧 Volume</option>
+                    <option value="area">🖼️ Area</option>
+                    <option value="speed">🏎️ Speed</option>
+                    <option value="time">⏰ Time</option>
+                    <option value="power">⚡️ Power</option>
+                    <option value="energy">🔋 Energy</option>
+                    <option value="pressure">💨 Pressure</option>
+                    <option value="data">💾 Data Storage</option>
+                </select>
+            </div>
+        </header>
+
+        <div class="converter-body">
+            <div class="input-group">
+                <label for="input-from" id="label-from">Meters</label>
+                <input type="number" id="input-from" placeholder="0" aria-labelledby="label-from">
+                <div class="select-wrapper">
+                   <select id="select-from" aria-label="From unit"></select>
+                </div>
+            </div>
+
+            <button id="swap-button" class="swap-button" aria-label="Swap units">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="24px" height="24px"><path d="M 4.5 2 C 3.121 2 2 3.121 2 4.5 L 2 9.5 C 2 9.776 2.224 10 2.5 10 L 7.5 10 C 7.776 10 8 9.776 8 9.5 C 8 9.224 7.776 9 7.5 9 L 4 9 L 4 4.5 C 4 4.224 3.776 4 3.5 4 C 3.224 4 3 4.224 3 4.5 L 3 8.0859375 A 8 8 0 0 1 11 3 A 8 8 0 0 1 19 11 A 8 8 0 0 1 13.912109 18.25 L 14.800781 19.341797 C 15.041781 19.624797 15.003141 20.046859 14.719141 20.288859 C 14.437141 20.528859 14.015063 20.566875 13.732063 20.325875 L 12.083984 18.898438 A 10 10 0 0 0 11 21 A 10 10 0 0 0 21 11 A 10 10 0 0 0 11 1 A 10 10 0 0 0 4.5 2 z M 9.28125 3.7109375 C 8.99825 3.9529375 8.9596094 4.375 9.1996094 4.6580078 L 10.267578 5.9160156 A 8 8 0 0 1 11 5 A 8 8 0 0 1 19 13 A 8 8 0 0 1 11 21 L 11 21 A 8 8 0 0 1 5 15.414062 L 5 16.5 C 5 16.776 4.776 17 4.5 17 C 4.224 17 4 16.776 4 16.5 L 4 11.5 C 4 11.224 4.224 11 4.5 11 L 9.5 11 C 9.776 11 10 11.224 10 11.5 C 10 11.776 9.776 12 9.5 12 L 6 12 L 6 13.5 A 6 6 0 0 0 11 19 A 6 6 0 0 0 17 13 A 6 6 0 0 0 11 7 A 6 6 0 0 0 9.28125 7.2890625 L 8.6816406 8.0175781 C 8.4416406 8.2985781 8.0205 8.3371094 7.7395 8.0971094 C 7.4585 7.8571094 7.4199219 7.4359687 7.6609219 7.1549687 L 9.28125 5.2890625 z"/></svg>
+            </button>
+
+            <div class="input-group">
+                <label for="input-to" id="label-to">Feet</label>
+                <input type="number" id="input-to" placeholder="0" aria-labelledby="label-to">
+                <div class="select-wrapper">
+                    <select id="select-to" aria-label="To unit"></select>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="index.tsx"></script>
+</body>
+</html>

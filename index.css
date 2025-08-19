@@ -1,0 +1,203 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg-color: #f0f2f5;
+    --card-bg-color: #ffffff;
+    --primary-color: #6a11cb;
+    --secondary-color: #2575fc;
+    --text-color: #333;
+    --text-light-color: #777;
+    --border-color: #e0e0e0;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --font-family: 'Poppins', sans-serif;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    line-height: 1.6;
+}
+
+.converter-container {
+    background: var(--card-bg-color);
+    border-radius: 24px;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 10px 30px var(--shadow-color);
+    width: 100%;
+    max-width: 550px;
+    transition: all 0.3s ease;
+}
+
+header h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Common styles for select elements */
+select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background-color: #f9f9f9;
+    font-family: var(--font-family);
+    font-size: 1rem;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.2);
+}
+
+.category-selector-wrapper,
+.select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.category-selector-wrapper::after,
+.select-wrapper::after {
+    content: '▼';
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    color: var(--text-light-color);
+    pointer-events: none;
+}
+
+.category-selector-wrapper {
+    margin-bottom: 2rem;
+}
+
+.converter-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-light-color);
+    padding-left: 0.25rem;
+}
+
+.input-group input[type="number"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    -moz-appearance: textfield; /* Firefox */
+}
+
+.input-group input[type="number"]::-webkit-outer-spin-button,
+.input-group input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+.input-group input[type="number"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.2);
+}
+
+.swap-button {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease-in-out, box-shadow 0.2s ease;
+    margin-top: 1.5rem; /* Align with input fields */
+}
+
+.swap-button:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.swap-button:active {
+    transform: scale(0.95);
+}
+
+.swap-button.rotating {
+    transform: rotate(180deg);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+
+@media (max-width: 500px) {
+    .converter-container {
+        padding: 1.5rem;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .converter-body {
+        flex-direction: column;
+    }
+    
+    .swap-button {
+        transform: rotate(90deg);
+        margin: 0.5rem 0;
+    }
+    
+    .swap-button.rotating {
+        transform: rotate(270deg);
+    }
+}
