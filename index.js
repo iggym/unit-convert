@@ -4,30 +4,29 @@
 */
 import { GoogleGenAI } from "@google/genai";
 
-const categorySelect = document.getElementById('category-select') as HTMLSelectElement;
-const inputFrom = document.getElementById('input-from') as HTMLInputElement;
-const selectFrom = document.getElementById('select-from') as HTMLSelectElement;
-const labelFrom = document.getElementById('label-from') as HTMLElement;
-const inputTo = document.getElementById('input-to') as HTMLInputElement;
-const selectTo = document.getElementById('select-to') as HTMLSelectElement;
-const labelTo = document.getElementById('label-to') as HTMLElement;
-const swapButton = document.getElementById('swap-button') as HTMLButtonElement;
-const factoidContainer = document.getElementById('factoid-container') as HTMLElement;
-const factoidContent = document.getElementById('factoid-content') as HTMLParagraphElement;
+const categorySelect = document.getElementById('category-select');
+const inputFrom = document.getElementById('input-from');
+const selectFrom = document.getElementById('select-from');
+const labelFrom = document.getElementById('label-from');
+const inputTo = document.getElementById('input-to');
+const selectTo = document.getElementById('select-to');
+const labelTo = document.getElementById('label-to');
+const swapButton = document.getElementById('swap-button');
+const factoidContainer = document.getElementById('factoid-container');
+const factoidContent = document.getElementById('factoid-content');
 
 // Initialize Gemini API
 let ai;
 try {
     ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-} catch (error) {
+} catch (error)
+    {
     console.error("Failed to initialize GoogleGenAI:", error);
     factoidContainer.style.display = 'block';
     factoidContent.textContent = 'Could not initialize the AI service. Fun facts are unavailable.';
 }
 
-let debounceTimer: number;
-
-type UnitInfo = { name: string; factor: number; };
+let debounceTimer;
 
 const units = {
     length: {
@@ -136,8 +135,8 @@ async function fetchAndDisplayFactoid() {
     }
 }
 
-function populateSelects<T extends keyof typeof units>(category: T) {
-    const unitOptions = units[category] as Record<string, UnitInfo>;
+function populateSelects(category) {
+    const unitOptions = units[category];
     selectFrom.innerHTML = '';
     selectTo.innerHTML = '';
 
@@ -149,7 +148,7 @@ function populateSelects<T extends keyof typeof units>(category: T) {
 
     selectFrom.selectedIndex = 0;
     selectTo.selectedIndex = 1;
-    if(Object.keys(unitOptions).length <= 1) {
+    if (Object.keys(unitOptions).length <= 1) {
         selectTo.selectedIndex = 0;
     }
     updateLabels();
@@ -160,12 +159,12 @@ function updateLabels() {
     labelTo.textContent = selectTo.options[selectTo.selectedIndex].text;
 }
 
-function convert<T extends keyof typeof units>(value: number, fromUnit: string, toUnit: string, category: T) {
+function convert(value, fromUnit, toUnit, category) {
     if (category === 'temperature') {
         return convertTemperature(value, fromUnit, toUnit);
     }
 
-    const categoryUnits = units[category] as Record<string, UnitInfo>;
+    const categoryUnits = units[category];
     const fromFactor = categoryUnits[fromUnit].factor;
     const toFactor = categoryUnits[toUnit].factor;
 
@@ -173,9 +172,9 @@ function convert<T extends keyof typeof units>(value: number, fromUnit: string, 
     return valueInBaseUnit / toFactor;
 }
 
-function convertTemperature(value: number, from: string, to: string) {
+function convertTemperature(value, from, to) {
     if (from === to) return value;
-    let celsius: number;
+    let celsius;
 
     switch (from) {
         case 'fahrenheit':
@@ -198,8 +197,8 @@ function convertTemperature(value: number, from: string, to: string) {
     }
 }
 
-function handleConversion(source: 'from' | 'to') {
-    const category = categorySelect.value as keyof typeof units;
+function handleConversion(source) {
+    const category = categorySelect.value;
     const [sourceInput, targetInput] = source === 'from' ? [inputFrom, inputTo] : [inputTo, inputFrom];
     const [sourceSelect, targetSelect] = source === 'from' ? [selectFrom, selectTo] : [selectTo, selectFrom];
 
@@ -217,12 +216,12 @@ function handleConversion(source: 'from' | 'to') {
     targetInput.value = Number(result.toPrecision(15)).toString();
 }
 
-function handleInputWithDebounce(source: 'from' | 'to') {
+function handleInputWithDebounce(source) {
     handleConversion(source);
 
     clearTimeout(debounceTimer);
     debounceTimer = window.setTimeout(() => {
-        if(inputFrom.value) {
+        if (inputFrom.value) {
             fetchAndDisplayFactoid();
         }
     }, 600);
@@ -246,7 +245,7 @@ function swapUnits() {
 }
 
 function onCategoryChange() {
-    const category = categorySelect.value as keyof typeof units;
+    const category = categorySelect.value;
     populateSelects(category);
     handleConversion('from');
     fetchAndDisplayFactoid();
