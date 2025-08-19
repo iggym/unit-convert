@@ -9,6 +9,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.15.0"
+  }
+}
+</script>
 </head>
 <body>
     <main class="converter-container">
@@ -35,7 +42,7 @@
         <div class="converter-body">
             <div class="input-group">
                 <label for="input-from" id="label-from">Meters</label>
-                <input type="number" id="input-from" placeholder="0" aria-labelledby="label-from">
+                <input type="number" id="input-from" value="1" placeholder="0" aria-labelledby="label-from">
                 <div class="select-wrapper">
                    <select id="select-from" aria-label="From unit"></select>
                 </div>
@@ -53,6 +60,11 @@
                 </div>
             </div>
         </div>
+        
+        <section class="factoid-container" id="factoid-container" aria-live="polite">
+            <h2>Fun Fact ✨</h2>
+            <p id="factoid-content">Select units to see a fun fact!</p>
+        </section>
     </main>
 
     <script type="module" src="index.tsx"></script>

@@ -166,6 +166,31 @@ select:focus {
     transform: rotate(180deg);
 }
 
+.factoid-container {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    display: none; /* Hidden by default */
+}
+
+.factoid-container h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.factoid-container p {
+    font-size: 0.95rem;
+    color: var(--text-light-color);
+    line-height: 1.7;
+}
+
+
 .sr-only {
   position: absolute;
   width: 1px;

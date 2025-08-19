@@ -2,22 +2,30 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
+import { GoogleGenAI } from "@google/genai";
 
 const categorySelect = document.getElementById('category-select') as HTMLSelectElement;
 const inputFrom = document.getElementById('input-from') as HTMLInputElement;
 const selectFrom = document.getElementById('select-from') as HTMLSelectElement;
-const labelFrom = document.getElementById('label-from') as HTMLLabelElement;
+const labelFrom = document.getElementById('label-from') as HTMLElement;
 const inputTo = document.getElementById('input-to') as HTMLInputElement;
 const selectTo = document.getElementById('select-to') as HTMLSelectElement;
-const labelTo = document.getElementById('label-to') as HTMLLabelElement;
+const labelTo = document.getElementById('label-to') as HTMLElement;
 const swapButton = document.getElementById('swap-button') as HTMLButtonElement;
+const factoidContainer = document.getElementById('factoid-container') as HTMLElement;
+const factoidContent = document.getElementById('factoid-content') as HTMLParagraphElement;
 
-type UnitData = {
-    [key: string]: {
-        name: string;
-        factor: number; // Factor to convert from a base unit
-    };
-};
+// Initialize Gemini API
+let ai;
+try {
+    ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+} catch (error) {
+    console.error("Failed to initialize GoogleGenAI:", error);
+    factoidContainer.style.display = 'block';
+    factoidContent.textContent = 'Could not initialize the AI service. Fun facts are unavailable.';
+}
+
+let debounceTimer: number;
 
 const units = {
     length: {
@@ -96,19 +104,52 @@ const units = {
     }
 };
 
-function populateSelects(category: keyof typeof units) {
-    const unitOptions = units[category] as UnitData;
+async function fetchAndDisplayFactoid() {
+    if (!ai) return;
+
+    const category = categorySelect.value;
+    const fromUnitName = selectFrom.options[selectFrom.selectedIndex].text;
+    const toUnitName = selectTo.options[selectTo.selectedIndex].text;
+
+    if (fromUnitName === toUnitName) {
+        factoidContainer.style.display = 'none';
+        return;
+    }
+
+    factoidContainer.style.display = 'block';
+    factoidContent.textContent = 'Generating a fun fact...';
+
+    try {
+        const prompt = `Provide a useful, interesting, and surprising factoid comparing ${fromUnitName} and ${toUnitName} for the category "${category}". Relate the comparison to everyday life, objects, or tasks in a short, engaging paragraph.`;
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+        });
+
+        factoidContent.textContent = response.text;
+    } catch (error) {
+        console.error("Factoid generation failed:", error);
+        factoidContent.textContent = 'Could not generate a fact at this time. Please try again later.';
+    }
+}
+
+function populateSelects<T extends keyof typeof units>(category: T) {
+    const unitOptions = units[category];
     selectFrom.innerHTML = '';
     selectTo.innerHTML = '';
 
     Object.keys(unitOptions).forEach(key => {
-        const option = unitOptions[key];
+        const option = unitOptions[key as keyof typeof unitOptions];
         selectFrom.innerHTML += `<option value="${key}">${option.name}</option>`;
         selectTo.innerHTML += `<option value="${key}">${option.name}</option>`;
     });
 
     selectFrom.selectedIndex = 0;
     selectTo.selectedIndex = 1;
+    if(Object.keys(unitOptions).length <= 1) {
+        selectTo.selectedIndex = 0;
+    }
     updateLabels();
 }
 
@@ -117,24 +158,23 @@ function updateLabels() {
     labelTo.textContent = selectTo.options[selectTo.selectedIndex].text;
 }
 
-function convert(value: number, fromUnit: string, toUnit: string, category: keyof typeof units): number {
+function convert<T extends keyof typeof units>(value: number, fromUnit: string, toUnit: string, category: T) {
     if (category === 'temperature') {
         return convertTemperature(value, fromUnit, toUnit);
     }
 
-    const categoryUnits = units[category] as UnitData;
-    const fromFactor = categoryUnits[fromUnit].factor;
-    const toFactor = categoryUnits[toUnit].factor;
+    const categoryUnits = units[category];
+    const fromFactor = categoryUnits[fromUnit as keyof typeof categoryUnits].factor;
+    const toFactor = categoryUnits[toUnit as keyof typeof categoryUnits].factor;
 
     const valueInBaseUnit = value * fromFactor;
     return valueInBaseUnit / toFactor;
 }
 
-function convertTemperature(value: number, from: string, to: string): number {
+function convertTemperature(value: number, from: string, to: string) {
     if (from === to) return value;
     let celsius: number;
 
-    // Convert to Celsius first
     switch (from) {
         case 'fahrenheit':
             celsius = (value - 32) * 5 / 9;
@@ -142,17 +182,16 @@ function convertTemperature(value: number, from: string, to: string): number {
         case 'kelvin':
             celsius = value - 273.15;
             break;
-        default: // 'celsius'
+        default:
             celsius = value;
     }
 
-    // Convert from Celsius to target unit
     switch (to) {
         case 'fahrenheit':
             return (celsius * 9 / 5) + 32;
         case 'kelvin':
             return celsius + 273.15;
-        default: // 'celsius'
+        default:
             return celsius;
     }
 }
@@ -173,9 +212,20 @@ function handleConversion(source: 'from' | 'to') {
     
     const result = convert(value, fromUnit, toUnit, category);
     
-    // Format to a reasonable number of decimal places
-    targetInput.value = Number(result.toFixed(4)).toString();
+    targetInput.value = Number(result.toPrecision(15)).toString();
 }
+
+function handleInputWithDebounce(source: 'from' | 'to') {
+    handleConversion(source);
+
+    clearTimeout(debounceTimer);
+    debounceTimer = window.setTimeout(() => {
+        if(inputFrom.value) {
+            fetchAndDisplayFactoid();
+        }
+    }, 600);
+}
+
 
 function swapUnits() {
     swapButton.classList.add('rotating');
@@ -186,6 +236,7 @@ function swapUnits() {
     
     updateLabels();
     handleConversion('from');
+    fetchAndDisplayFactoid();
 
     swapButton.addEventListener('transitionend', () => {
         swapButton.classList.remove('rotating');
@@ -195,21 +246,23 @@ function swapUnits() {
 function onCategoryChange() {
     const category = categorySelect.value as keyof typeof units;
     populateSelects(category);
-    inputFrom.value = '1'; // Reset with a default value
     handleConversion('from');
+    fetchAndDisplayFactoid();
 }
 
 // Event Listeners
 categorySelect.addEventListener('change', onCategoryChange);
-inputFrom.addEventListener('input', () => handleConversion('from'));
-inputTo.addEventListener('input', () => handleConversion('to'));
+inputFrom.addEventListener('input', () => handleInputWithDebounce('from'));
+inputTo.addEventListener('input', () => handleInputWithDebounce('to'));
 selectFrom.addEventListener('change', () => {
     updateLabels();
     handleConversion('from');
+    fetchAndDisplayFactoid();
 });
 selectTo.addEventListener('change', () => {
     updateLabels();
     handleConversion('from');
+    fetchAndDisplayFactoid();
 });
 swapButton.addEventListener('click', swapUnits);
 
