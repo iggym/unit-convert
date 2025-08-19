@@ -18,18 +18,38 @@
     --font-family: 'Poppins', sans-serif;
 }
 
-html, body {
+html {
     height: 100%;
 }
 
 body {
     font-family: var(--font-family);
-    background-color: var(--bg-color);
     color: var(--text-color);
     display: grid;
     place-items: center;
     padding: 1rem;
     line-height: 1.6;
+    height: 100%;
+    
+    /* Dynamic Background Styles */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    transition: background-image 0.8s ease-in-out;
+    position: relative;
+    z-index: 1;
+}
+
+/* Readability Overlay */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.35);
+    z-index: -1;
 }
 
 .converter-container {
@@ -138,6 +158,27 @@ select:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.2);
 }
+
+/* Conversion Result Animation */
+@keyframes pop-in {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.6;
+    }
+    70% {
+        transform: scale(1.02);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.input-group input[type="number"].animate-pop {
+    animation: pop-in 0.3s ease-out;
+}
+
 
 .swap-button {
     background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
